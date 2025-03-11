@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net48</TargetFramework>
+		<LangVersion>latest</LangVersion>
+		<RootNamespace>fr34kyn01535.Uconomy</RootNamespace>
+		<AssemblyName>Uconomy</AssemblyName>
+		<Version>1.0.1</Version>
+		<AssemblyVersion>1.0.4.1</AssemblyVersion>
+		<AssemblyTitle>Uconomy</AssemblyTitle>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="RestoreMonarchy.RocketRedist" Version="3.25.1" ExcludeAssets="runtime" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Reference Include="AdvancedEconomy">
+	    <HintPath>..\lib\AdvancedEconomy.dll</HintPath>
+		<Private>false</Private>
+	  </Reference>
+	</ItemGroup>
+
+</Project>
