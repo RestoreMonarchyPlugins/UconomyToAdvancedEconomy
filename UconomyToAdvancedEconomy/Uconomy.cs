@@ -5,6 +5,7 @@ using Rocket.Core;
 using Rocket.Core.Logging;
 using Rocket.Core.Plugins;
 using Rocket.Unturned.Player;
+using SDG.Unturned;
 using Steamworks;
 using System;
 
@@ -21,26 +22,32 @@ namespace fr34kyn01535.Uconomy
         {
             Logger.Log($"Loading UconomyToAdvancedEconomy {Assembly.GetName().Version.ToString(3)}...", ConsoleColor.Yellow);
             
-            if (economyPlugin == null)
+            if (economyPlugin == null || economyPlugin.Events == null)
             {
-                Logger.LogError("AdvancedEconomy was not found on the server!");
+                Logger.Log("AdvancedEconomy is not loaded!", ConsoleColor.Yellow);
                 UnloadPlugin(PluginState.Cancelled);
                 return;
             }
 
             Instance = this;
             Database = new DatabaseManager();
-            R.Plugins.OnPluginsLoaded += OnPluginsLoaded;
+            
+            if (Level.isLoaded)
+            {
+                OnPluginsLoaded();
+            } else
+            {
+                R.Plugins.OnPluginsLoaded += OnPluginsLoaded;
+            }
 
             Logger.Log($"UconomyToAdvancedEconomy {Assembly.GetName().Version.ToString(3)} has been loaded!", ConsoleColor.Yellow);
         }
 
         protected override void Unload()
         {
-            Logger.Log("Unloading UconomyToAdvancedEconomy...", ConsoleColor.Yellow);
             R.Plugins.OnPluginsLoaded -= OnPluginsLoaded;
 
-            if (economyPlugin != null)
+            if (economyPlugin != null && economyPlugin.Events != null)
             {
                 economyPlugin.Events.OnPlayerBalanceChecked -= OnBalanceChecked;
                 economyPlugin.Events.OnPlayerBalanceUpdated -= OnPlayerBalanceUpdated;
@@ -52,6 +59,13 @@ namespace fr34kyn01535.Uconomy
 
         private void OnPluginsLoaded()
         {
+            if (economyPlugin == null || economyPlugin.Events == null)
+            {
+                Logger.Log("AdvancedEconomy was not loaded properly!", ConsoleColor.Red);
+                UnloadPlugin(PluginState.Cancelled);
+                return;
+            }
+
             economyPlugin.Events.OnPlayerBalanceChecked += OnBalanceChecked;
             economyPlugin.Events.OnPlayerBalanceUpdated += OnPlayerBalanceUpdated;
             economyPlugin.Events.OnPlayerPaid += OnPlayerPaid;
